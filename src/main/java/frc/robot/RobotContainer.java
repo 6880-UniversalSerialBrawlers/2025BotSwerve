@@ -50,6 +50,7 @@ public class RobotContainer {
     public RobotContainer() {
         // Configure the button bindings
         configureButtonBindings();
+        setupShuffleboard();
 
         // Configure default commands
         m_robotDrive.setDefaultCommand(
@@ -117,6 +118,32 @@ public class RobotContainer {
 
         // Start Button -> Zero swerve heading
         m_driverController.start().onTrue(m_robotDrive.zeroHeadingCommand());
+    }
+
+    private void setupShuffleBoard() {
+        ShuffleboardTab tab = Shuffleboard.getTab("Driver");
+
+
+        //Chooser
+         // Auto chooser
+        m_autoChooser.setDefaultOption("Default Auto", getAutonomousCommand());
+        // Add more auto options here
+        SmartDashboard.putData("Auto Mode", m_autoChooser);
+
+
+
+
+        //Maybe this is correct?? Trying to display the turn rate:)
+        Telemetry
+        public double getTurnRate() {
+            return m_gyro.getRate(IMUAxis.kZ) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+         }
+        
+
+
+
+        // Camera
+        CameraServer.startAutomaticCapture();
     }
 
     public double getSimulationTotalCurrentDraw() {
