@@ -83,6 +83,21 @@ public class DriveSubsystem extends SubsystemBase {
     return m_odometry.getPoseMeters();
   }
 
+  public double getChassisSpeed() {
+    SwerveModuleState frontLeftState = m_frontLeft.getState();
+    SwerveModuleState frontRightState = m_frontRight.getState();
+    SwerveModuleState rearLeftState = m_rearLeft.getState();
+    SwerveModuleState rearRightState = m_rearRight.getState();
+
+    SwerveModuleState[] states = new SwerveModuleState[] {
+      frontLeftState, frontRightState, rearLeftState, rearRightState
+    };
+
+    var chassisSpeeds = DriveConstants.kDriveKinematics.toChassisSpeeds(states);
+
+    return Math.hypot(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond);
+  }
+
   /**
    * Resets the odometry to the specified pose.
    *

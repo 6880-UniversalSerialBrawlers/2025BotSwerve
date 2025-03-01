@@ -13,12 +13,22 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+
+import edu.wpi.first.cameraserver.CameraServer;
+
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -26,6 +36,7 @@ import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.CoralSubsystem.Setpoint;
 import frc.robot.subsystems.DriveSubsystem;
+
 import java.util.List;
 
 /*
@@ -35,20 +46,23 @@ import java.util.List;
 * (including subsystems, commands, and button mappings) should be declared here.
 */
 public class RobotContainer {
-    // The robot's subsystems
+    // Susbsystems
     private final DriveSubsystem m_robotDrive = new DriveSubsystem();
     private final CoralSubsystem m_coralSubSystem = new CoralSubsystem();
     private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
 
-    // The driver's controller
+    // Controllers
     CommandXboxController m_driverController =
         new CommandXboxController(OIConstants.kDriverControllerPort);
     CommandXboxController m_attachmentController = 
-        new CommandXboxController(OIConstants.kAttachmentControllerPort)
+        new CommandXboxController(OIConstants.kAttachmentControllerPort);
+
+    // Auto chooser
+    public final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
+    private ShuffleboardTab board;
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        // Configure the button bindings
         configureButtonBindings();
         setupShuffleboard();
 
@@ -79,18 +93,21 @@ public class RobotContainer {
      * {@link JoystickButton}.
      */
     private void configureButtonBindings() {
-        // Left Stick Button -> Set swerve to X
-        m_driverController.leftStick().whileTrue(m_robotDrive.setXCommand());
+        /*
+         *                          DRIVER CONTROLLER MAPPINGS
+         */
+        // left bumper --> set X position
+        m_driverController.leftBumper().onTrue(m_robotDrive.setXCommand());
 
-        // Left Bumper -> Run tube intake
-        m_driverController.leftBumper().whileTrue(m_coralSubSystem.runIntakeCommand());
+        // right bumper --> zero gyro heading
+        m_driverController.rightBumper().whileTrue(m_robotDrive.zeroHeadingCommand());
 
-        // Right Bumper -> Run tube intake in reverse
-        m_driverController.rightBumper().whileTrue(m_coralSubSystem.reverseIntakeCommand());
-
-        // B Button -> Elevator/Arm to human player position, set ball intake to stow
-        // when idle
-        m_driverController
+        /*
+         *                          ATTACHMENT CONTROLLER MAPPINGS
+         */
+        // elevator
+        // B Button -> Elevator/Arm to human player position, set ball intake to stow when idle
+        m_attachmentController
             .b()
             .onTrue(
                 m_coralSubSystem
@@ -98,52 +115,51 @@ public class RobotContainer {
                     .alongWith(m_algaeSubsystem.stowCommand()));
 
         // A Button -> Elevator/Arm to level 2 position
-        m_driverController.a().onTrue(m_coralSubSystem.setSetpointCommand(Setpoint.kLevel2));
+        m_attachmentController.a().onTrue(m_coralSubSystem.setSetpointCommand(Setpoint.kLevel2));
 
         // X Button -> Elevator/Arm to level 3 position
-        m_driverController.x().onTrue(m_coralSubSystem.setSetpointCommand(Setpoint.kLevel3));
+        m_attachmentController.x().onTrue(m_coralSubSystem.setSetpointCommand(Setpoint.kLevel3));
 
         // Y Button -> Elevator/Arm to level 4 position
-        m_driverController.y().onTrue(m_coralSubSystem.setSetpointCommand(Setpoint.kLevel4));
+        m_attachmentController.y().onTrue(m_coralSubSystem.setSetpointCommand(Setpoint.kLevel4));
 
+        // algae
         // Right Trigger -> Run ball intake, set to leave out when idle
-        m_driverController
+        m_attachmentController
             .rightTrigger(OIConstants.kTriggerButtonThreshold)
             .whileTrue(m_algaeSubsystem.runIntakeCommand());
 
         // Left Trigger -> Run ball intake in reverse, set to stow when idle
-        m_driverController
+        m_attachmentController
             .leftTrigger(OIConstants.kTriggerButtonThreshold)
             .whileTrue(m_algaeSubsystem.reverseIntakeCommand());
 
-        // Start Button -> Zero swerve heading
-        m_driverController.start().onTrue(m_robotDrive.zeroHeadingCommand());
+        // coral
+        // Left Bumper -> Run tube intake
+        m_attachmentController.leftBumper().whileTrue(m_coralSubSystem.runIntakeCommand());
+
+        // Right Bumper -> Run tube intake in reverse
+        m_attachmentController.rightBumper().whileTrue(m_coralSubSystem.reverseIntakeCommand());
     }
 
-    private void setupShuffleBoard() {
-        ShuffleboardTab tab = Shuffleboard.getTab("Driver");
-
-
-        //Chooser
-         // Auto chooser
+    private void setupShuffleboard() {
+        // Chooser
         m_autoChooser.setDefaultOption("Default Auto", getAutonomousCommand());
-        // Add more auto options here
+        // add more stuff here
         SmartDashboard.putData("Auto Mode", m_autoChooser);
-
-
-
-
-        //Maybe this is correct?? Trying to display the turn rate:)
-        Telemetry
-        public double getTurnRate() {
-            return m_gyro.getRate(IMUAxis.kZ) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
-         }
-        
-
-
 
         // Camera
         CameraServer.startAutomaticCapture();
+        board = Shuffleboard.getTab("DASHBOARD");
+        board.addCamera("Front Camera", "usb:0");
+    }
+
+    public void updateShuffleboard() {
+        board.add("Battery Voltage", RobotController.getBatteryVoltage());
+        board.add("Gyro Angle", m_robotDrive.getHeading());
+        board.add("Speed", m_robotDrive.getChassisSpeed());
+        // add more stuff here
+        SmartDashboard.putNumber("Battery Voltage", RobotController.getBatteryVoltage());
     }
 
     public double getSimulationTotalCurrentDraw() {
