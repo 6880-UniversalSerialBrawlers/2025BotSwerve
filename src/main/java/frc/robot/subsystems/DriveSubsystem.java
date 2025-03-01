@@ -89,9 +89,8 @@ public class DriveSubsystem extends SubsystemBase {
     SwerveModuleState rearLeftState = m_rearLeft.getState();
     SwerveModuleState rearRightState = m_rearRight.getState();
 
-    SwerveModuleState[] states = new SwerveModuleState[] {
-      frontLeftState, frontRightState, rearLeftState, rearRightState
-    };
+    SwerveModuleState[] states =
+        new SwerveModuleState[] {frontLeftState, frontRightState, rearLeftState, rearRightState};
 
     var chassisSpeeds = DriveConstants.kDriveKinematics.toChassisSpeeds(states);
 
