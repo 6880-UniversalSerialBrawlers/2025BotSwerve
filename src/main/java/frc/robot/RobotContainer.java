@@ -97,11 +97,7 @@ public class RobotContainer {
      */
     // elevator
     // B Button -> Elevator/Arm to human player position, set ball intake to stow when idle
-    m_attachmentController
-        .b()
-        .onTrue(
-            m_coralSubSystem
-                .setSetpointCommand(Setpoint.kFeederStation));
+    m_attachmentController.b().onTrue(m_coralSubSystem.setSetpointCommand(Setpoint.kFeederStation));
 
     // A Button -> Elevator/Arm to level 2 position
     m_attachmentController.a().onTrue(m_coralSubSystem.setSetpointCommand(Setpoint.kLevel2));
