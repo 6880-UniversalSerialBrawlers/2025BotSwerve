@@ -28,7 +28,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.CoralSubsystem.Setpoint;
 import frc.robot.subsystems.DriveSubsystem;
@@ -44,7 +43,6 @@ public class RobotContainer {
   // Susbsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final CoralSubsystem m_coralSubSystem = new CoralSubsystem();
-  private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
 
   // Controllers
   CommandXboxController m_driverController =
@@ -76,9 +74,6 @@ public class RobotContainer {
                         m_driverController.getRightX(), OIConstants.kDriveDeadband),
                     true),
             m_robotDrive));
-
-    // Set the ball intake to in/out when not running based on internal state
-    m_algaeSubsystem.setDefaultCommand(m_algaeSubsystem.idleCommand());
   }
 
   /**
@@ -106,8 +101,7 @@ public class RobotContainer {
         .b()
         .onTrue(
             m_coralSubSystem
-                .setSetpointCommand(Setpoint.kFeederStation)
-                .alongWith(m_algaeSubsystem.stowCommand()));
+                .setSetpointCommand(Setpoint.kFeederStation));
 
     // A Button -> Elevator/Arm to level 2 position
     m_attachmentController.a().onTrue(m_coralSubSystem.setSetpointCommand(Setpoint.kLevel2));
@@ -117,17 +111,6 @@ public class RobotContainer {
 
     // Y Button -> Elevator/Arm to level 4 position
     m_attachmentController.y().onTrue(m_coralSubSystem.setSetpointCommand(Setpoint.kLevel4));
-
-    // algae
-    // Right Trigger -> Run ball intake, set to leave out when idle
-    m_attachmentController
-        .rightTrigger(OIConstants.kTriggerButtonThreshold)
-        .whileTrue(m_algaeSubsystem.runIntakeCommand());
-
-    // Left Trigger -> Run ball intake in reverse, set to stow when idle
-    m_attachmentController
-        .leftTrigger(OIConstants.kTriggerButtonThreshold)
-        .whileTrue(m_algaeSubsystem.reverseIntakeCommand());
 
     // coral
     // Left Bumper -> Run tube intake
@@ -159,8 +142,7 @@ public class RobotContainer {
 
   public double getSimulationTotalCurrentDraw() {
     // for each subsystem with simulation
-    return m_coralSubSystem.getSimulationCurrentDraw()
-        + m_algaeSubsystem.getSimulationCurrentDraw();
+    return m_coralSubSystem.getSimulationCurrentDraw();
   }
 
   /**
