@@ -21,8 +21,8 @@ public final class Constants {
 
   public static final class CoralSubsystemConstants {
     public static final int kElevatorMotorCanId = 51;
-    public static final int kArmMotorCanId = 3;
-    public static final int kIntakeMotorCanId = 2;
+    public static final int kArmMotorCanId = 61;
+    public static final int kIntakeMotorCanId = 62;
 
     public static final class ElevatorSetpoints {
       public static final int kFeederStation = 0;
