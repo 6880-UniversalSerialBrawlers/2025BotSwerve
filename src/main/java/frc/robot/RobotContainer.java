@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -32,6 +33,8 @@ import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.CoralSubsystem.Setpoint;
 import frc.robot.subsystems.DriveSubsystem;
 import java.util.List;
+
+// Adding imports trying to work on camera:)
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -119,13 +122,15 @@ public class RobotContainer {
   private void setupShuffleboard() {
     // Chooser
     m_autoChooser.setDefaultOption("Default Auto", getAutonomousCommand());
-    // add more stuff here
     SmartDashboard.putData("Auto Mode", m_autoChooser);
 
     // Camera
-    CameraServer.startAutomaticCapture();
+    UsbCamera camera = CameraServer.startAutomaticCapture();
+    camera.setResolution(640, 480);
+
+    // Shuffleboard Tab
     board = Shuffleboard.getTab("DASHBOARD");
-    board.addCamera("Front Camera", "usb:0");
+    board.add("Front Camera", CameraServer.getServer().getSource());
   }
 
   public void updateShuffleboard() {
