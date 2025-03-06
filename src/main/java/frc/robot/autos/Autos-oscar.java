@@ -41,7 +41,7 @@ public final class Autos {
         Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
             new Pose2d(0, 0, new Rotation2d(0)),  // Start at origin (0,0)
             new ArrayList<>(),                    // No intermediate waypoints
-            new Pose2d(3, 0, new Rotation2d(0)),  // End at (3,0)
+            new Pose2d(1, 0, new Rotation2d(0)),  // End at (3,0)
             config
         );
 
@@ -108,6 +108,7 @@ public final class Autos {
             new WaitCommand(1.0),          // Wait for 1 second
             doNothing(),                   // Do nothing (just for testing or sequence)
             new WaitCommand(1.0),          // Wait again for 1 second
+            new leftAndUp(1.0),
             new InstantCommand(() -> System.out.println("Autonomous routine complete!"))  // Print a message
         );
     }
