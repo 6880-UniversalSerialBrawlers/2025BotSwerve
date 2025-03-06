@@ -241,6 +241,55 @@ public class CoralSubsystem extends SubsystemBase {
         () -> this.setIntakePower(IntakeSetpoints.kReverse), () -> this.setIntakePower(0.0));
   }
 
+  /**
+   * Run the elevator motor in open-loop (manual) mode. The speed is scaled based on the driver
+   * input. Positive speed moves the elevator upward and negative downward. Safety checks prevent
+   * overextending or bottoming out.
+   *
+   * @param speed a value between -1.0 and 1.0 representing desired motor output.
+   */
+  public void runElevatorManual(double speed) {
+    double currentElevatorPos = elevatorEncoder.getPosition();
+
+    // Safety check: prevent upward movement if at or above maximum position.
+    if (speed > 0 && currentElevatorPos >= CoralSubsystemConstants.kMaxElevatorPosition) {
+      elevatorMotor.set(0);
+    }
+    // Safety check: prevent downward movement if the reverse limit switch is pressed
+    // or the position is at/below the minimum.
+    else if (speed < 0
+        && (elevatorMotor.getReverseLimitSwitch().isPressed()
+            || currentElevatorPos <= CoralSubsystemConstants.kMinElevatorPosition)) {
+      elevatorMotor.set(0);
+    } else {
+      // Otherwise, set the motor output.
+      // (You can scale 'speed' further if needed for performance tuning.)
+      elevatorMotor.set(speed);
+    }
+  }
+
+  /**
+   * Run the arm motor in open-loop (manual) mode. The speed is scaled based on the operator input.
+   * Positive speed moves the arm forward and negative backward. Safety checks prevent the arm from
+   * moving outside its safe range.
+   *
+   * @param speed a value between -1.0 and 1.0 representing desired motor output.
+   */
+  public void runArmManual(double speed) {
+    double currentArmPos = armEncoder.getPosition();
+
+    // Safety check: prevent forward movement if at or above the maximum angle.
+    if (speed > 0 && currentArmPos >= CoralSubsystemConstants.kMaxArmPosition) {
+      armMotor.set(0);
+    }
+    // Safety check: prevent backward movement if at or below the minimum angle.
+    else if (speed < 0 && currentArmPos <= CoralSubsystemConstants.kMinArmPosition) {
+      armMotor.set(0);
+    } else {
+      armMotor.set(speed);
+    }
+  }
+
   @Override
   public void periodic() {
     moveToSetpoint();

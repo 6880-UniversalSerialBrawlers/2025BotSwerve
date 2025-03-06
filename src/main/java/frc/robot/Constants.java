@@ -24,16 +24,21 @@ public final class Constants {
     public static final int kArmMotorCanId = 61;
     public static final int kIntakeMotorCanId = 62;
 
+    public static final double kMaxElevatorPosition = 15.73;
+    public static final double kMinElevatorPosition = 0;
+    public static final double kMaxArmPosition = 10;
+    public static final double kMinArmPosition = -10;
+
     public static final class ElevatorSetpoints {
-      public static final int kFeederStation = 0;
-      public static final int kLevel1 = 0;
-      public static final int kLevel2 = 0;
-      public static final int kLevel3 = 100;
-      public static final int kLevel4 = 150;
+      public static final double kFeederStation = 5.5;
+      public static final double kLevel1 = 0;
+      public static final double kLevel2 = 5;
+      public static final double kLevel3 = 10.49;
+      public static final double kLevel4 = 15.73;
     }
 
     public static final class ArmSetpoints {
-      public static final double kFeederStation = 33;
+      public static final double kFeederStation = 5.5;
       public static final double kLevel1 = 0;
       public static final double kLevel2 = 2;
       public static final double kLevel3 = 2;

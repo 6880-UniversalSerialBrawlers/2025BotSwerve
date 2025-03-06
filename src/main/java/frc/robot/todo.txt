@@ -1,0 +1,14 @@
+                            ---TODO---
+
+Constants.java
+ - tune the limits on elevator & arm
+     - do we need conversion for units??
+ - tune P/I/D/FF values for motors in general (low priority)
+
+RobotContainer.java
+ - make sure the controller mappings are fine and work 
+ - make sure all functions work in general (subsystems, shuffleboard)
+
+Autos.java
+ - add more autos / auto routines!
+ - investigate pathplanner / pathweaver / etc.
