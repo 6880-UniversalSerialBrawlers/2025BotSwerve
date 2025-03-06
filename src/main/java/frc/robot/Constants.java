@@ -96,7 +96,7 @@ public final class Constants {
     public static final int kRearRightTurningCanId = 32;
 
     // Gyro config
-    public static final int gyroId = 10;
+    public static final int gyroID = 10;
     public static final boolean kGyroReversed = false;
   }
 
