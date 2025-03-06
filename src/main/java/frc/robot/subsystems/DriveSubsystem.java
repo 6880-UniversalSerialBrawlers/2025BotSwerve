@@ -78,6 +78,10 @@ public class DriveSubsystem extends SubsystemBase {
           m_rearLeft.getPosition(),
           m_rearRight.getPosition()
         });
+    SmartDashboard.putNumber("front left abs encoder", m_frontLeft.getTurningEncoder());
+    SmartDashboard.putNumber("front right abs encoder", m_frontRight.getTurningEncoder());
+    SmartDashboard.putNumber("rear left abs encoder", m_rearLeft.getTurningEncoder());
+    SmartDashboard.putNumber("rear right abs encoder", m_rearRight.getTurningEncoder());
   }
 
   /**
