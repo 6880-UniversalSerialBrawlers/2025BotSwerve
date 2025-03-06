@@ -16,9 +16,11 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Configs;
 
 public class MAXSwerveModule {
+  private static int id = 0;
   private final SparkFlex m_drivingSpark;
   private final SparkMax m_turningSpark;
 
@@ -45,6 +47,8 @@ public class MAXSwerveModule {
 
     m_drivingClosedLoopController = m_drivingSpark.getClosedLoopController();
     m_turningClosedLoopController = m_turningSpark.getClosedLoopController();
+
+    id += 1;
 
     // Apply the respective configurations to the SPARKS. Reset parameters before
     // applying the configuration to bring the SPARK to a known good state. Persist
@@ -100,9 +104,13 @@ public class MAXSwerveModule {
     correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
     correctedDesiredState.angle =
         desiredState.angle.plus(Rotation2d.fromRadians(m_chassisAngularOffset));
+    SmartDashboard.putNumber("IS IT WORKING?" + id, correctedDesiredState.angle.getDegrees());
 
     // Optimize the reference state to avoid spinning further than 90 degrees.
-    correctedDesiredState.optimize(new Rotation2d(m_turningEncoder.getPosition()));
+    // correctedDesiredState.optimize(new Rotation2d(m_turningEncoder.getPosition()));
+    correctedDesiredState =
+        SwerveModuleState.optimize(
+            correctedDesiredState, new Rotation2d(m_turningEncoder.getPosition()));
 
     // Command driving and turning SPARKS towards their respective setpoints.
     m_drivingClosedLoopController.setReference(
@@ -110,11 +118,19 @@ public class MAXSwerveModule {
     m_turningClosedLoopController.setReference(
         correctedDesiredState.angle.getRadians(), ControlType.kPosition);
 
-    m_desiredState = desiredState;
+    m_desiredState = correctedDesiredState;
   }
 
   /** Zeroes all the SwerveModule encoders. */
   public void resetEncoders() {
     m_drivingEncoder.setPosition(0);
+  }
+
+  public double getDrivingEncoder() {
+    return this.m_drivingEncoder.getPosition();
+  }
+
+  public double getTurningEncoder() {
+    return this.m_turningEncoder.getPosition();
   }
 }

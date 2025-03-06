@@ -26,15 +26,15 @@ public final class Constants {
 
     public static final double kMaxElevatorPosition = 15.73;
     public static final double kMinElevatorPosition = 0;
-    public static final double kMaxArmPosition = 10;
+    public static final double kMaxArmPosition = 20;
     public static final double kMinArmPosition = -10;
 
     public static final class ElevatorSetpoints {
       public static final double kFeederStation = 5.5;
       public static final double kLevel1 = 0;
-      public static final double kLevel2 = 5;
-      public static final double kLevel3 = 10.49;
-      public static final double kLevel4 = 15.73;
+      public static final double kLevel2 = 50;
+      public static final double kLevel3 = 100;
+      public static final double kLevel4 = 160;
     }
 
     public static final class ArmSetpoints {
@@ -70,7 +70,7 @@ public final class Constants {
 
   public static final class DriveConstants {
     // Speeds
-    public static final double kMaxSpeedMetersPerSecond = 4.8;
+    public static final double kMaxSpeedMetersPerSecond = 2;
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
     // Chassis configuration
@@ -110,7 +110,7 @@ public final class Constants {
     public static final int kDrivingMotorPinionTeeth = 14;
 
     // Calculations required for driving motor conversion factors and feed forward
-    public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
+    public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm; // /60
     public static final double kWheelDiameterMeters = 0.0762;
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the

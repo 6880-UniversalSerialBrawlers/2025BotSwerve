@@ -63,12 +63,12 @@ public class RobotContainer {
             () ->
                 m_robotDrive.drive(
                     -MathUtil.applyDeadband(
-                        m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                    -MathUtil.applyDeadband(
                         m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                     -MathUtil.applyDeadband(
+                        m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+                    -MathUtil.applyDeadband(
                         m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                    false),
+                    true),
             m_robotDrive));
   }
 
@@ -83,10 +83,10 @@ public class RobotContainer {
      *                          DRIVER CONTROLLER MAPPINGS
      */
     // left bumper --> set X position
-    m_driverController.leftBumper().onTrue(m_robotDrive.setXCommand());
+    m_driverController.leftTrigger().whileTrue(m_robotDrive.setXCommand());
 
     // right bumper --> zero gyro heading
-    m_driverController.rightBumper().onTrue(m_robotDrive.zeroHeadingCommand());
+    m_driverController.rightTrigger().whileTrue(m_robotDrive.zeroHeadingCommand());
 
     /*
      *                          ATTACHMENT CONTROLLER MAPPINGS
@@ -106,10 +106,10 @@ public class RobotContainer {
 
     // coral
     // Left Bumper -> Run tube intake
-    m_attachmentController.leftBumper().whileTrue(m_coralSubsystem.runIntakeCommand());
+    m_attachmentController.leftTrigger().whileTrue(m_coralSubsystem.runIntakeCommand());
 
     // Right Bumper -> Run tube intake in reverse
-    m_attachmentController.rightBumper().whileTrue(m_coralSubsystem.reverseIntakeCommand());
+    m_attachmentController.rightTrigger().whileTrue(m_coralSubsystem.reverseIntakeCommand());
 
     // manual triggers for elevator up/down and arm
     Command runElevatorManualCommand =
