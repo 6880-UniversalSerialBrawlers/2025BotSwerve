@@ -1,14 +1,12 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.sim.SparkFlexSim;
 import com.revrobotics.sim.SparkLimitSwitchSim;
 import com.revrobotics.sim.SparkMaxSim;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -48,8 +46,8 @@ public class CoralSubsystem extends SubsystemBase {
 
   // Initialize elevator SPARK. We will use MAXMotion position control for the elevator, so we also
   // need to initialize the closed loop controller and encoder.
-  private SparkFlex elevatorMotor =
-      new SparkFlex(CoralSubsystemConstants.kElevatorMotorCanId, MotorType.kBrushless);
+  private SparkMax elevatorMotor =
+      new SparkMax(CoralSubsystemConstants.kElevatorMotorCanId, MotorType.kBrushless);
   private SparkClosedLoopController elevatorClosedLoopController =
       elevatorMotor.getClosedLoopController();
   private RelativeEncoder elevatorEncoder = elevatorMotor.getEncoder();
@@ -67,7 +65,7 @@ public class CoralSubsystem extends SubsystemBase {
 
   // Simulation setup and variables
   private DCMotor elevatorMotorModel = DCMotor.getNeoVortex(1);
-  private SparkFlexSim elevatorMotorSim;
+  private SparkMaxSim elevatorMotorSim;
   private SparkLimitSwitchSim elevatorLimitSwitchSim;
   private final ElevatorSim m_elevatorSim =
       new ElevatorSim(
@@ -147,7 +145,7 @@ public class CoralSubsystem extends SubsystemBase {
     elevatorEncoder.setPosition(0);
 
     // Initialize simulation values
-    elevatorMotorSim = new SparkFlexSim(elevatorMotor, elevatorMotorModel);
+    elevatorMotorSim = new SparkMaxSim(elevatorMotor, elevatorMotorModel);
     elevatorLimitSwitchSim = new SparkLimitSwitchSim(elevatorMotor, false);
     armMotorSim = new SparkMaxSim(armMotor, armMotorModel);
   }

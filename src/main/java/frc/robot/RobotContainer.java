@@ -135,7 +135,7 @@ public class RobotContainer {
 
   public void updateShuffleboard() {
     board.add("Battery Voltage", RobotController.getBatteryVoltage());
-    board.add("Gyro Angle", m_robotDrive.getHeading());
+    board.add("Gyro Angle", m_robotDrive.getHeading().getDegrees());
     board.add("Speed", m_robotDrive.getChassisSpeed());
     // add more stuff here
     SmartDashboard.putNumber("Battery Voltage", RobotController.getBatteryVoltage());
