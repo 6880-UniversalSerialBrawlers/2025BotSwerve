@@ -20,14 +20,17 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
 
   public static final class CoralSubsystemConstants {
+    public static final double kElevatorMaxSpeed = 5; // meters per second
+    public static final double kArmMaxSpeed = 0.2;
+
     public static final int kElevatorMotorCanId = 51;
     public static final int kArmMotorCanId = 61;
     public static final int kIntakeMotorCanId = 62;
 
-    public static final double kMaxElevatorPosition = 15.73;
+    public static final double kMaxElevatorPosition = 200;
     public static final double kMinElevatorPosition = 0;
     public static final double kMaxArmPosition = 20;
-    public static final double kMinArmPosition = -10;
+    public static final double kMinArmPosition = -5;
 
     public static final class ElevatorSetpoints {
       public static final double kFeederStation = 5.5;
@@ -46,11 +49,12 @@ public final class Constants {
     }
 
     public static final class IntakeSetpoints {
-      public static final double kForward = 0.5;
-      public static final double kReverse = -0.5;
+      public static final double kForward = 0.5; // 0.5
+      public static final double kReverse = -0.5; // -0.5
     }
   }
 
+  /*
   public static final class AlgaeSubsystemConstants {
     public static final int kIntakeMotorCanId = 13;
     public static final int kPivotMotorCanId = 14;
@@ -67,10 +71,11 @@ public final class Constants {
       public static final double kHold = 0.25;
     }
   }
+  */
 
   public static final class DriveConstants {
     // Speeds
-    public static final double kMaxSpeedMetersPerSecond = 2;
+    public static final double kMaxSpeedMetersPerSecond = 4.8;
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
     // Chassis configuration
@@ -84,10 +89,10 @@ public final class Constants {
             new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
     // Angular offsets of the modules relative to the chassis
-    public static final double kFrontLeftChassisAngularOffset = 0; // -Math.PI/2
-    public static final double kFrontRightChassisAngularOffset = 0.4116288;
-    public static final double kBackLeftChassisAngularOffset = 0.5677638;
-    public static final double kBackRightChassisAngularOffset = 0.6858168;
+    public static final double kFrontLeftChassisAngularOffset = 0.8273416; // -Math.PI/2
+    public static final double kFrontRightChassisAngularOffset = 0.6643792;
+    public static final double kBackLeftChassisAngularOffset = 0.8146116;
+    public static final double kBackRightChassisAngularOffset = 0.6877586;
 
     // SPARK MAX CAN IDs
     public static final int kFrontLeftDrivingCanId = 11;
@@ -123,10 +128,12 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
-    public static final double kDriveDeadband = 0.1;
+    public static final double kDriveDeadband = 0.2;
     public static final double kTriggerButtonThreshold = 0.2;
 
     public static final int kAttachmentControllerPort = 1;
+    public static final double kElevatorDeadband = 0.1;
+    public static final double kArmDeadband = 0.2;
   }
 
   public static final class AutoConstants {

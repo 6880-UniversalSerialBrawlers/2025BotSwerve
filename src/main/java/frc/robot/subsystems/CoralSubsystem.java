@@ -51,6 +51,7 @@ public class CoralSubsystem extends SubsystemBase {
   private SparkClosedLoopController elevatorClosedLoopController =
       elevatorMotor.getClosedLoopController();
   private RelativeEncoder elevatorEncoder = elevatorMotor.getEncoder();
+  // elevatorMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
   // Initialize intake SPARK. We will use open loop control for this so we don't need a closed loop
   // controller like above.
@@ -260,20 +261,16 @@ public class CoralSubsystem extends SubsystemBase {
   public void runElevatorManual(double speed) {
     double currentElevatorPos = elevatorEncoder.getPosition();
 
-    // Safety check: prevent upward movement if at or above maximum position.
-    if (speed > 0 && currentElevatorPos >= CoralSubsystemConstants.kMaxElevatorPosition) {
+    double speedDelivered = speed * CoralSubsystemConstants.kElevatorMaxSpeed;
+
+    if (speedDelivered > 0 && currentElevatorPos >= CoralSubsystemConstants.kMaxElevatorPosition) {
       elevatorMotor.set(0);
-    }
-    // Safety check: prevent downward movement if the reverse limit switch is pressed
-    // or the position is at/below the minimum.
-    else if (speed < 0
+    } else if (speedDelivered < 0
         && (elevatorMotor.getReverseLimitSwitch().isPressed()
             || currentElevatorPos <= CoralSubsystemConstants.kMinElevatorPosition)) {
       elevatorMotor.set(0);
     } else {
-      // Otherwise, set the motor output.
-      // (You can scale 'speed' further if needed for performance tuning.)
-      elevatorMotor.set(speed);
+      elevatorMotor.set(speedDelivered);
     }
   }
 
@@ -285,17 +282,18 @@ public class CoralSubsystem extends SubsystemBase {
    * @param speed a value between -1.0 and 1.0 representing desired motor output.
    */
   public void runArmManual(double speed) {
+    double speedDelivered = speed * CoralSubsystemConstants.kArmMaxSpeed;
     double currentArmPos = armEncoder.getPosition();
 
     // Safety check: prevent forward movement if at or above the maximum angle.
-    if (speed > 0 && currentArmPos >= CoralSubsystemConstants.kMaxArmPosition) {
+    if (speedDelivered > 0 && currentArmPos >= CoralSubsystemConstants.kMaxArmPosition) {
       armMotor.set(0);
     }
     // Safety check: prevent backward movement if at or below the minimum angle.
-    else if (speed < 0 && currentArmPos <= CoralSubsystemConstants.kMinArmPosition) {
+    else if (speedDelivered < 0 && currentArmPos <= CoralSubsystemConstants.kMinArmPosition) {
       armMotor.set(0);
     } else {
-      armMotor.set(speed);
+      armMotor.set(speedDelivered);
     }
   }
 

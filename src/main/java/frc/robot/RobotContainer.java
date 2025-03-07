@@ -76,8 +76,12 @@ public class RobotContainer {
     m_coralSubsystem.setDefaultCommand(
         new RunCommand(
             () -> {
-              double elevatorSpeed = m_attachmentController.getLeftY();
-              double armSpeed = m_attachmentController.getLeftX();
+              double elevatorSpeed =
+                  -MathUtil.applyDeadband(
+                      m_attachmentController.getLeftY(), OIConstants.kElevatorDeadband);
+              double armSpeed =
+                  -MathUtil.applyDeadband(
+                      m_attachmentController.getLeftX(), OIConstants.kArmDeadband);
               System.out.println(
                   "Controller #2: Elevator: " + elevatorSpeed + ", Arm: " + armSpeed);
               m_coralSubsystem.runElevatorManual(elevatorSpeed);
@@ -197,6 +201,7 @@ public class RobotContainer {
     m_autoChooser.setDefaultOption("Do Nothing", Autos.doNothing());
     m_autoChooser.addOption("Sample", Autos.sample(m_robotDrive));
     m_autoChooser.addOption("Routine #1", Autos.routine1(m_robotDrive));
+    m_autoChooser.addOption("Foward 3m", Autos.driveForward(m_robotDrive));
     SmartDashboard.putData("Auto Mode", m_autoChooser);
 
     // Camera
