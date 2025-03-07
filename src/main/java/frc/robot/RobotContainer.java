@@ -16,7 +16,9 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
@@ -37,6 +39,7 @@ public class RobotContainer {
   // Subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
+  private boolean isIntakeRunning = false;
 
   // Controllers
   CommandXboxController m_driverController =
@@ -74,7 +77,9 @@ public class RobotContainer {
         new RunCommand(
             () -> {
               double elevatorSpeed = m_attachmentController.getLeftY();
-              double armSpeed = m_attachmentController.getRightY();
+              double armSpeed = m_attachmentController.getLeftX();
+              System.out.println(
+                  "Controller #2: Elevator: " + elevatorSpeed + ", Arm: " + armSpeed);
               m_coralSubsystem.runElevatorManual(elevatorSpeed);
               m_coralSubsystem.runArmManual(armSpeed);
             },
@@ -88,37 +93,103 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
+
     /*
      *                          DRIVER CONTROLLER MAPPINGS
      */
+
     // left bumper --> set X position
-    m_driverController.leftTrigger().onTrue(m_robotDrive.setXCommand());
+    m_driverController
+        .leftTrigger()
+        .onTrue(
+            new SequentialCommandGroup(
+                new InstantCommand(
+                    () -> System.out.println("controller #1 - left trigger pressed"), m_robotDrive),
+                m_robotDrive.setXCommand()));
 
     // right bumper --> zero gyro heading
-    m_driverController.rightTrigger().onTrue(m_robotDrive.zeroHeadingCommand());
+    m_driverController
+        .rightTrigger()
+        .onTrue(
+            new SequentialCommandGroup(
+                new InstantCommand(
+                    () -> System.out.println("controller #1 - right trigger pressed"),
+                    m_robotDrive),
+                m_robotDrive.zeroHeadingCommand()));
 
     /*
      *                          ATTACHMENT CONTROLLER MAPPINGS
      */
+
     // elevator
     // B Button -> Elevator/Arm to human player position
-    m_attachmentController.b().onTrue(m_coralSubsystem.setSetpointCommand(Setpoint.kFeederStation));
+    m_attachmentController
+        .b()
+        .onTrue(
+            new SequentialCommandGroup(
+                new InstantCommand(
+                    () -> System.out.println("controller #2 - button B pressed"), m_coralSubsystem),
+                m_coralSubsystem.setSetpointCommand(Setpoint.kFeederStation)));
 
     // A Button -> Elevator/Arm to level 2 position
-    m_attachmentController.a().onTrue(m_coralSubsystem.setSetpointCommand(Setpoint.kLevel2));
+    m_attachmentController
+        .a()
+        .onTrue(
+            new SequentialCommandGroup(
+                new InstantCommand(
+                    () -> System.out.println("controller #2 - button A pressed"), m_coralSubsystem),
+                m_coralSubsystem.setSetpointCommand(Setpoint.kLevel2)));
 
     // X Button -> Elevator/Arm to level 3 position
-    m_attachmentController.x().onTrue(m_coralSubsystem.setSetpointCommand(Setpoint.kLevel3));
+    m_attachmentController
+        .x()
+        .onTrue(
+            new SequentialCommandGroup(
+                new InstantCommand(
+                    () -> System.out.println("controller #2 - button X pressed"), m_coralSubsystem),
+                m_coralSubsystem.setSetpointCommand(Setpoint.kLevel3)));
 
     // Y Button -> Elevator/Arm to level 4 position
-    m_attachmentController.y().onTrue(m_coralSubsystem.setSetpointCommand(Setpoint.kLevel4));
+    m_attachmentController
+        .y()
+        .onTrue(
+            new SequentialCommandGroup(
+                new InstantCommand(
+                    () -> System.out.println("controller #2 - button Y pressed"), m_coralSubsystem),
+                m_coralSubsystem.setSetpointCommand(Setpoint.kLevel4)));
 
     // coral
-    // Left Bumper -> Run tube intake
-    m_attachmentController.leftTrigger().onTrue(m_coralSubsystem.runIntakeCommand());
+    // Left Bumper -> Toggle tube intake
+    m_attachmentController
+        .leftBumper()
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  System.out.println("controller #2 - left bumper pressed");
+                  if (isIntakeRunning) {
+                    m_coralSubsystem.stopIntakeCommand().schedule();
+                  } else {
+                    m_coralSubsystem.runIntakeCommand().schedule();
+                  }
+                  isIntakeRunning = !isIntakeRunning;
+                },
+                m_coralSubsystem));
 
-    // Right Bumper -> Run tube intake in reverse
-    m_attachmentController.rightTrigger().onTrue(m_coralSubsystem.reverseIntakeCommand());
+    // Right Bumper -> Toggle tube intake in reverse
+    m_attachmentController
+        .rightBumper()
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  System.out.println("controller #2 - right bumper pressed");
+                  if (isIntakeRunning) {
+                    m_coralSubsystem.stopIntakeCommand().schedule();
+                  } else {
+                    m_coralSubsystem.reverseIntakeCommand().schedule();
+                  }
+                  isIntakeRunning = !isIntakeRunning;
+                },
+                m_coralSubsystem));
   }
 
   private void setupShuffleboard() {

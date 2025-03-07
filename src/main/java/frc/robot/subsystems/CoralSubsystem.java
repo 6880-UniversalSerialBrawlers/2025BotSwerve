@@ -233,12 +233,21 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   /**
-   * Command to reverses the intake motor. When the command is interrupted, e.g. the button is
-   * released, the motor will stop.
+   * v bv b v vvv vc v Command to reverses the intake motor. When the command is interrupted, e.g.
+   * the button is released, the motor will stop.
    */
   public Command reverseIntakeCommand() {
     return this.startEnd(
         () -> this.setIntakePower(IntakeSetpoints.kReverse), () -> this.setIntakePower(0.0));
+  }
+
+  /**
+   * Command to stop the intake motor. This ensures that when the command is scheduled, the intake
+   * motor immediately stops running.
+   */
+  public Command stopIntakeCommand() {
+    System.out.println("\nIntake stopped!\n");
+    return this.runOnce(() -> this.setIntakePower(0.0));
   }
 
   /**
@@ -290,6 +299,11 @@ public class CoralSubsystem extends SubsystemBase {
     }
   }
 
+  /** Get the current drawn by each simulation physics model */
+  public double getSimulationCurrentDraw() {
+    return m_elevatorSim.getCurrentDrawAmps() + m_armSim.getCurrentDrawAmps();
+  }
+
   @Override
   public void periodic() {
     moveToSetpoint();
@@ -317,11 +331,6 @@ public class CoralSubsystem extends SubsystemBase {
                     armEncoder.getPosition() / SimulationRobotConstants.kArmReduction))
             - 90 // subtract 90 degrees to account for the elevator
         );
-  }
-
-  /** Get the current drawn by each simulation physics model */
-  public double getSimulationCurrentDraw() {
-    return m_elevatorSim.getCurrentDrawAmps() + m_armSim.getCurrentDrawAmps();
   }
 
   @Override
