@@ -76,7 +76,7 @@ public final class Configs {
           .outputRange(-1, 1)
           .maxMotion
           // Set MAXMotion parameters for position control
-          .maxVelocity(2000)
+          .maxVelocity(1000) // 2000?
           .maxAcceleration(10000)
           .allowedClosedLoopError(0.25);
 
@@ -105,7 +105,7 @@ public final class Configs {
           .outputRange(-1, 1)
           .maxMotion
           // Set MAXMotion parameters for position control
-          .maxVelocity(4200)
+          .maxVelocity(6000) // 4200
           .maxAcceleration(6000)
           .allowedClosedLoopError(0.5);
 

@@ -70,6 +70,15 @@ public class RobotContainer {
                         m_driverController.getRightX(), OIConstants.kDriveDeadband),
                     true),
             m_robotDrive));
+    m_coralSubsystem.setDefaultCommand(
+        new RunCommand(
+            () -> {
+              double elevatorSpeed = m_attachmentController.getLeftY();
+              double armSpeed = m_attachmentController.getRightY();
+              m_coralSubsystem.runElevatorManual(elevatorSpeed);
+              m_coralSubsystem.runArmManual(armSpeed);
+            },
+            m_coralSubsystem));
   }
 
   /**
@@ -83,10 +92,10 @@ public class RobotContainer {
      *                          DRIVER CONTROLLER MAPPINGS
      */
     // left bumper --> set X position
-    m_driverController.leftTrigger().whileTrue(m_robotDrive.setXCommand());
+    m_driverController.leftTrigger().onTrue(m_robotDrive.setXCommand());
 
     // right bumper --> zero gyro heading
-    m_driverController.rightTrigger().whileTrue(m_robotDrive.zeroHeadingCommand());
+    m_driverController.rightTrigger().onTrue(m_robotDrive.zeroHeadingCommand());
 
     /*
      *                          ATTACHMENT CONTROLLER MAPPINGS
@@ -106,30 +115,10 @@ public class RobotContainer {
 
     // coral
     // Left Bumper -> Run tube intake
-    m_attachmentController.leftTrigger().whileTrue(m_coralSubsystem.runIntakeCommand());
+    m_attachmentController.leftTrigger().onTrue(m_coralSubsystem.runIntakeCommand());
 
     // Right Bumper -> Run tube intake in reverse
-    m_attachmentController.rightTrigger().whileTrue(m_coralSubsystem.reverseIntakeCommand());
-
-    // manual triggers for elevator up/down and arm
-    Command runElevatorManualCommand =
-        new RunCommand(
-            () -> {
-              double elevatorSpeed = m_attachmentController.getLeftY();
-              m_coralSubsystem.runElevatorManual(elevatorSpeed);
-            },
-            m_coralSubsystem);
-
-    Command runArmManualCommand =
-        new RunCommand(
-            () -> {
-              double armSpeed = m_attachmentController.getRightY();
-              m_coralSubsystem.runArmManual(armSpeed);
-            },
-            m_coralSubsystem);
-
-    m_attachmentController.leftTrigger().whileTrue(runElevatorManualCommand);
-    m_attachmentController.rightTrigger().whileTrue(runArmManualCommand);
+    m_attachmentController.rightTrigger().onTrue(m_coralSubsystem.reverseIntakeCommand());
   }
 
   private void setupShuffleboard() {

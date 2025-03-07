@@ -12,3 +12,7 @@ RobotContainer.java
 Autos.java
  - add more autos / auto routines!
  - investigate pathplanner / pathweaver / etc.
+
+                            ---BUILD---
+ - new swerve modules
+ - do all electricals
